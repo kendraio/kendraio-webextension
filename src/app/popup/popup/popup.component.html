@@ -1,0 +1,12 @@
+
+
+<div class="panel">
+  <div class="panel-heading">Kendraio App</div>
+  <div class="panel-block"><div *ngIf="!isLoggedIn; else loggedIn">
+    <button class="button is-link is-outlined is-fullwidth" (click)="login()">Login</button>
+  </div>
+    <ng-template #loggedIn>
+      <button class="button is-link is-outlined is-fullwidth" (click)="logout()">Logout</button>
+    </ng-template>
+  </div>
+</div>

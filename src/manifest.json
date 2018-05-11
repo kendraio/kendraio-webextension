@@ -1,0 +1,23 @@
+{
+  "name": "Kendraio App",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "description": "Kendraio App as a WebExtension",
+  "homepage_url": "https://kendra.io/",
+  "browser_action": {
+    "default_title": "Kendraio Verify",
+    "default_popup": "index.html#/popup"
+  },
+  "background": {
+    "page": "index.html#/background"
+  },
+  "icons": {
+    "128": "assets/kendraio-logo.png"
+  },
+  "permissions": [
+    "identity",
+    "notifications",
+    "activeTab",
+    "contextMenus"
+  ]
+}
