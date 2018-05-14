@@ -26,8 +26,22 @@
       <div class="card-header-title">Tag image</div>
     </div>
     <div class="card-content">
-      <!--<p>{{ userToken }}</p>-->
-      <img [attr.src]="imgUrl" draggable="false">
+
+      <div class="tag-container">
+        <img [attr.src]="imgUrl" (click)="imageClicked($event)" draggable="false">
+
+        <div *ngFor="let tag of tagFormTags.getRawValue(); let i=index">
+          <div class="tag-box"
+               [style.top.px]="tag.region.minY"
+               [style.left.px]="tag.region.minX"
+               [style.width.px]="100"
+               [style.height.px]="100">
+            <span>{{ tag.personName }}</span>
+          </div>
+        </div>
+      </div>
+
+
 
       <div class="field">
         <label class="label">Image source</label>
@@ -36,24 +50,27 @@
         </div>
       </div>
 
-      <!--<div class="field">-->
-        <!--<label class="label">Notes</label>-->
-        <!--<div class="control">-->
-          <!--<input class="input" type="text" placeholder="Notes">-->
-        <!--</div>-->
-      <!--</div>-->
+      <form [formGroup]="tagForm">
+        <div formArrayName="tags">
 
-      <div class="field">
-        <label class="label">People tagged in this image:</label>
-        <div class="control">
-          <input class="input" type="text">
+          <div *ngFor="let tag of tagFormTags.controls; let i=index" [formGroupName]="i">
+
+            <div class="field">
+              <label class="label">Tag #{{ i + 1 }}</label>
+              <div class="control">
+                <input class="input" type="text" formControlName="personName">
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
+      </form>
 
 
+      <br>
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-link" (click)="onSubmit()" [class.is-loading]="isSending">Submit</button>
+          <button class="button is-link" [disabled]="tagForm.invalid" (click)="onSubmit()" [class.is-loading]="isSending">Submit</button>
         </div>
         <div class="control">
           <button class="button is-text" (click)="onCancel()">Cancel</button>

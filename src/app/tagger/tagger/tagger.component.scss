@@ -3,3 +3,14 @@
   margin: 2em auto;
   width: 80%;
 }
+.tag-container {
+  position: relative;
+}
+.tag-box {
+  position: absolute;
+  border: 5px solid blue;
+}
+.tag-box > span {
+  font-weight: bold;
+  color: white;
+}

@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ExtensionService } from './extension.service';
+import { MockExtensionService } from './mock-extension.service';
 
 const ROUTES = [
   {
@@ -34,6 +35,7 @@ const ROUTES = [
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [
+    // { provide: ExtensionService, useClass: MockExtensionService }
     ExtensionService
   ],
   bootstrap: [AppComponent]
