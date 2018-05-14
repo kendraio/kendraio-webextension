@@ -1,0 +1,27 @@
+<div class="panel">
+  <div class="panel-block">
+
+    <form [formGroup]="optionsForm" (ngSubmit)="save()">
+
+      <div class="field">
+        <label class="label">Backend URL</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="http://..." formControlName="backend">
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-link" [disabled]="optionsForm.invalid">Save</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="panel-block">
+    <p>
+      {{ statusTextContent }}
+    </p>
+  </div>
+</div>

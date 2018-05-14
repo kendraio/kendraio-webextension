@@ -6,18 +6,22 @@
   "homepage_url": "https://kendra.io/",
   "browser_action": {
     "default_title": "Kendraio Verify",
-    "default_popup": "index.html#/popup"
+    "default_popup": "/index.html#/popup"
   },
   "background": {
-    "page": "index.html#/background"
+    "page": "/index.html#/background"
   },
   "icons": {
     "128": "assets/kendraio-logo.png"
+  },
+  "options_ui": {
+    "page": "/index.html#/options"
   },
   "permissions": [
     "identity",
     "notifications",
     "activeTab",
-    "contextMenus"
+    "contextMenus",
+    "storage"
   ]
 }

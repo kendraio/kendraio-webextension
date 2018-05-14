@@ -41,15 +41,10 @@ export class BackgroundComponent implements OnInit {
       switch (info.menuItemId) {
         case "image-tagger":
           console.log({ info, tab });
-          const createData = {
-            url: "/index.html#/tagger",
-          };
           this.taggerInfo = info;
-          const creating = chrome.tabs.create(createData, tab => {
-            console.log(`Send message to tab ${tab.id}`);
-            chrome.runtime.sendMessage(info);
+          chrome.tabs.create({
+            url: "/index.html#/tagger",
           });
-          console.log({ creating });
           break;
       }
     });

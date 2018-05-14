@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const ROUTES = [
   {
@@ -17,6 +18,10 @@ const ROUTES = [
   {
     path: 'tagger',
     loadChildren: './tagger/tagger.module#TaggerModule'
+  },
+  {
+    path: 'options',
+    loadChildren: './options/options.module#OptionsModule'
   }
 ];
 
