@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { delay } from 'rxjs/operators';
+import { ExtensionService } from '../../extension.service';
 
 @Component({
   selector: 'app-tagger',
@@ -18,16 +19,16 @@ export class TaggerComponent implements OnInit {
   isSending = false;
   isError = false;
 
-  constructor(private zone: NgZone, private http: HttpClient) {
-    try {
-      this.userToken = getIdToken();
-    } catch (e) {
-      this.isError = true;
-    }
+  constructor(
+    private zone: NgZone,
+    private http: HttpClient,
+    private ext: ExtensionService
+  ) {
+    this.ext.getUserToken(token => this.userToken = token);
   }
 
   ngOnInit() {
-    chrome.runtime.sendMessage({ type: 'taggerGetInfo' }, ({ srcUrl, pageUrl }) => {
+    this.ext.initTagger(({ srcUrl, pageUrl }) => {
       this.zone.run(() => {
         console.log({ srcUrl, pageUrl });
         this.imgUrl = srcUrl;
@@ -56,12 +57,4 @@ export class TaggerComponent implements OnInit {
     });
   }
 
-}
-
-function getIdToken() {
-  const authParams = JSON.parse(localStorage.getItem('kendraio.authParams'));
-  if (authParams && authParams.id_token) {
-    return authParams.id_token;
-  }
-  throw new Error('No Auth Token');
 }

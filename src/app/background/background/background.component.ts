@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { ExtensionService } from '../../extension.service';
 
 @Component({
   selector: 'app-background',
@@ -10,10 +11,10 @@ export class BackgroundComponent implements OnInit {
 
   taggerInfo: any = {};
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private ext: ExtensionService) { }
 
   ngOnInit() {
-    chrome.runtime.onMessage.addListener(({ type }, sender, sendResponse) => {
+    this.ext.setBackgroundListener(({ type }, sender, sendResponse) => {
       console.log(`Run command ${type}`);
       switch (type) {
         case 'authenticate':
@@ -28,16 +29,7 @@ export class BackgroundComponent implements OnInit {
           break;
       }
     });
-
-    chrome.contextMenus.create({
-      id: "image-tagger",
-      title: 'Tag Image (Kendraio)',
-      contexts: ["image"]
-    }, (...e) => {
-      console.log(e);
-    });
-
-    chrome.contextMenus.onClicked.addListener((info, tab) => {
+    this.ext.setMenuListener((info, tab) => {
       switch (info.menuItemId) {
         case "image-tagger":
           console.log({ info, tab });

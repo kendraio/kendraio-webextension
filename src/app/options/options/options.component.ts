@@ -1,5 +1,6 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ExtensionService } from '../../extension.service';
 
 @Component({
   selector: 'app-options',
@@ -11,14 +12,18 @@ export class OptionsComponent implements OnInit {
   optionsForm: FormGroup;
   statusTextContent = '';
 
-  constructor(private fb: FormBuilder, private zone: NgZone) {
+  constructor(
+    private fb: FormBuilder,
+    private zone: NgZone,
+    private ext: ExtensionService
+  ) {
     this.optionsForm = this.fb.group({
       backend: ['http://localhost:8080', Validators.required]
     })
   }
 
   ngOnInit() {
-    chrome.storage.local.get({
+    this.ext.get({
       kendraioOptions: { backend: 'http://localhost:8080' }
     }, (items) => {
       this.zone.run(() => {
@@ -29,7 +34,7 @@ export class OptionsComponent implements OnInit {
 
   save() {
     const { backend } = this.optionsForm.getRawValue();
-    chrome.storage.local.set({ kendraioOptions: { backend }}, () => {
+    this.ext.set({ kendraioOptions: { backend }}, () => {
       this.zone.run(() => {
         this.statusTextContent = 'Options saved.';
       });

@@ -1,9 +1,9 @@
 <div class="panel">
   <div class="panel-heading">Kendraio App</div>
 
-  <div *ngIf="isLoggedIn$ | async; else notLoggedIn">
+  <div *ngIf="isLoggedIn; else notLoggedIn">
     <div class="panel-block">
-      You are logged in as <b>NAME</b>
+      <p>You are logged in as: <b>{{ userName }}</b></p>
     </div>
 
     <div class="panel-block">

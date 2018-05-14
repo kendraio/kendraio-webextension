@@ -1,9 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { JwtPayload } from '../../model/jwt-payload';
-import * as jwtDecode from 'jwt-decode';
+import { Component, NgZone, OnInit } from '@angular/core';
+import { ExtensionService } from '../../extension.service';
 
 @Component({
   selector: 'app-popup',
@@ -12,35 +8,30 @@ import * as jwtDecode from 'jwt-decode';
 })
 export class PopupComponent implements OnInit {
 
-  jwtPayload$: Subject<JwtPayload> = new Subject<JwtPayload>();
-  user$: Observable<any>;
-  isLoggedIn$: Observable<boolean>;
+  userName = '';
+  isLoggedIn = false;
 
-  constructor() { }
+  constructor(private ext: ExtensionService, private zone: NgZone) { }
 
   ngOnInit() {
     console.log('init popup');
-    this.user$ = this.jwtPayload$.pipe(
-      tap(console.log),
-      map((payload: JwtPayload) => jwtDecode(payload.id_token)),
-      tap(console.log)
-    );
-    this.isLoggedIn$ = this.user$.pipe(
-      tap(console.log),
-      map(user => !!user),
-      startWith(false)
-    );
-    this.jwtPayload$.next(JSON.parse(localStorage.getItem('kendraio.authParams')));
-    this.jwtPayload$.subscribe(console.log);
+    this.ext.getUser((user: any)=> {
+      if (user) {
+        this.zone.run(() => {
+          this.userName = user.nickname || 'Kendraio User';
+          this.isLoggedIn = true;
+        });
+      }
+    });
   }
 
   login() {
-    chrome.runtime.sendMessage({ type: "authenticate" });
+    this.ext.sendMessage('authenticate');
     window.close();
   }
 
   logout() {
-    chrome.runtime.sendMessage({ type: "logout" });
+    this.ext.sendMessage('logout');
     window.close();
   }
 

@@ -19,7 +19,7 @@
     </form>
 
   </div>
-  <div class="panel-block">
+  <div class="panel-block" *ngIf="!!statusTextContent">
     <p>
       {{ statusTextContent }}
     </p>

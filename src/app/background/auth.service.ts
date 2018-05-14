@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { generateCodeChallengePair } from './utils';
 import { environment } from '../../environments/environment';
+import { ExtensionService } from '../extension.service';
 
 const client_id = environment.auth0_client_id;
 const domain = environment.auth0_domain;
@@ -8,10 +9,10 @@ const domain = environment.auth0_domain;
 @Injectable()
 export class AuthService {
 
-  constructor() { }
+  constructor(private ext: ExtensionService) { }
 
   logout() {
-    localStorage.removeItem('kendraio.authParams');
+    this.ext.remove('kendraioAuthParams');
   }
 
   async authenticate() {
@@ -54,8 +55,9 @@ export class AuthService {
               'content-type': 'application/json'
             }
           });
-          const authParams = await result.json();
-          localStorage.setItem('kendraio.authParams', JSON.stringify(authParams));
+          const kendraioAuthParams = await result.json();
+          console.log('setting', kendraioAuthParams);
+          this.ext.set({ kendraioAuthParams }, () => console.log('Set auth params'));
         } catch (e) {
           console.error(e);
         }
