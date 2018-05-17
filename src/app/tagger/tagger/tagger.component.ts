@@ -49,6 +49,10 @@ export class TaggerComponent implements OnInit {
     });
   }
 
+  removeTag(i) {
+    this.formTags.removeAt(i);
+  }
+
   onImageLoad(event) {
     this.imageX = (this.sourceImage.nativeElement as HTMLImageElement).x;
     this.imageY = (this.sourceImage.nativeElement as HTMLImageElement).y;

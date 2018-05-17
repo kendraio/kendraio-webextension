@@ -14,7 +14,7 @@ export class TaggerHostComponent implements OnInit {
   imgUrl = '';
   pageUrl = '';
 
-  backendUrl = 'http://localhost:8080';
+  backendUrl = 'https://facta.kendra.io';
 
   isDone = false;
   isSending = false;

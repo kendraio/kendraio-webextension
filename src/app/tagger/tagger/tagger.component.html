@@ -43,7 +43,10 @@
             </div>
             <div class="media-content">
               <div class="field">
-                <label class="label">Tag #{{ i + 1 }}</label>
+                <label class="label">
+                  Tag {{ i + 1 }}
+                  <button class="delete" aria-label="delete" (click)="removeTag(i)"></button>
+                </label>
                 <div class="control">
                   <input class="input" type="text" formControlName="name">
                 </div>
