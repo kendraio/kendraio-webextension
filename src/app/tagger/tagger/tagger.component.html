@@ -1,101 +1,67 @@
-<div *ngIf="isError; else noError">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-  <div class="modal is-active">
-    <div class="modal-background"></div>
-    <div class="modal-content">
-
-      <article class="message is-danger">
-        <div class="message-header">
-          <p>No Auth</p>
-          <button class="delete" (click)="onCancel()" aria-label="delete"></button>
-        </div>
-        <div class="message-body">
-          Login via the toolbar to start tagging.
-        </div>
-      </article>
-
-    </div>
-  </div>
-
-</div>
-
-<ng-template #noError>
-
-  <div class="card" *ngIf="!isDone; else doneDialog">
+  <div class="card">
     <div class="card-header">
       <div class="card-header-title">Tag image</div>
     </div>
     <div class="card-content">
 
       <div class="tag-container">
-        <img [attr.src]="imgUrl" (click)="imageClicked($event)" draggable="false">
+        <img [attr.src]="imageUrl" (load)="onImageLoad($event)" #sourceImage draggable="false" (click)="onImageClicked($event)">
 
-        <div *ngFor="let tag of tagFormTags.getRawValue(); let i=index">
-          <div class="tag-box"
+        <div *ngFor="let tag of formTags.getRawValue(); let i = index">
+          <div class="tag-box" (mousedown)="onTagMouseDown(i)"
                [style.top.px]="tag.region.minY"
                [style.left.px]="tag.region.minX"
                [style.width.px]="100"
                [style.height.px]="100">
-            <span>{{ tag.personName }}</span>
+            <span>{{ tag.name }}</span>
           </div>
         </div>
       </div>
 
-
-
       <div class="field">
         <label class="label">Image source</label>
         <div class="control">
-          <input class="input" type="text" [value]="pageUrl" disabled>
+          <input class="input" type="text" formControlName="pageUrl">
         </div>
       </div>
 
-      <form [formGroup]="tagForm">
-        <div formArrayName="tags">
+      <div formArrayName="tags">
+        <div class="tag-fields-wrapper" *ngFor="let tag of formTags.controls; let i = index" [formGroupName]="i">
 
-          <div *ngFor="let tag of tagFormTags.controls; let i=index" [formGroupName]="i">
-
-            <div class="field">
-              <label class="label">Tag #{{ i + 1 }}</label>
-              <div class="control">
-                <input class="input" type="text" formControlName="personName">
+          <div class="media">
+            <div class="media-left">
+              <div class="tag-preview">
+                <img [attr.src]="imageUrl"
+                     [style.margin-left.px]="-tag.get('region').value['minX']"
+                     [style.margin-top.px]="-tag.get('region').value['minY']"
+                     [style.max-width.px]="imageWidth"
+                     [style.width.px]="imageWidth"
+                     [style.height.px]="imageHeight">
+              </div>
+            </div>
+            <div class="media-content">
+              <div class="field">
+                <label class="label">Tag #{{ i + 1 }}</label>
+                <div class="control">
+                  <input class="input" type="text" formControlName="name">
+                </div>
               </div>
             </div>
           </div>
 
         </div>
-      </form>
+      </div>
 
 
-      <br>
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-link" [disabled]="tagForm.invalid" (click)="onSubmit()" [class.is-loading]="isSending">Submit</button>
-        </div>
-        <div class="control">
-          <button class="button is-text" (click)="onCancel()">Cancel</button>
-        </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-footer-item">
+        <button class="button is-link" [disabled]="form.invalid">Submit</button>
+        <button class="button is-light">Cancel</button>
       </div>
     </div>
   </div>
 
-</ng-template>
-
-<ng-template #doneDialog>
-  <div class="modal is-active">
-    <div class="modal-background"></div>
-    <div class="modal-content">
-
-      <article class="message is-success">
-        <div class="message-header">
-          <p>Done</p>
-          <button class="delete" (click)="onCancel()" aria-label="delete"></button>
-        </div>
-        <div class="message-body">
-          Metadata submitted.
-        </div>
-      </article>
-
-    </div>
-  </div>
-</ng-template>
+</form>

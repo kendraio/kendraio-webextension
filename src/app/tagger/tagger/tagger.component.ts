@@ -1,12 +1,11 @@
-import { Component, NgZone, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { delay } from 'rxjs/operators';
-import { ExtensionService } from '../../extension.service';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { limit } from 'normalize-range';
+import { fromEvent } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
-const TAG_WIDTH = 100;
-const TAG_HEIGHT = 100;
+const HALF_TAG_WIDTH = 48;
+const HALF_TAG_HEIGHT = 48;
 
 @Component({
   selector: 'app-tagger',
@@ -15,93 +14,82 @@ const TAG_HEIGHT = 100;
 })
 export class TaggerComponent implements OnInit {
 
-  userToken = '';
-  imgUrl = '';
-  pageUrl = '';
+  @Input() imageUrl: string;
+  @Input() pageUrl: string;
+  @Output() taggedSubmitted = new EventEmitter<any>();
 
-  isDone = false;
-  isSending = false;
-  isError = false;
+  form: FormGroup;
 
-  tagForm: FormGroup;
+  @ViewChild('sourceImage') sourceImage: ElementRef;
+  imageX = 0;
+  imageY = 0;
+  imageWidth = 0;
+  imageHeight = 0;
 
-  constructor(
-    private zone: NgZone,
-    private http: HttpClient,
-    private ext: ExtensionService,
-    private fb: FormBuilder
-  ) {
-    this.ext.getUserToken(token => this.userToken = token);
-    this.tagForm = this.fb.group({
-      tags: this.fb.array([])
-    })
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.ext.initTagger(({ srcUrl, pageUrl }) => {
-      this.zone.run(() => {
-        console.log({ srcUrl, pageUrl });
-        this.imgUrl = srcUrl;
-        this.pageUrl = pageUrl;
-      });
+    this.form = this.fb.group({
+      tags: this.fb.array([]),
+      imgUrl: [{ value: this.imageUrl, disabled: true }],
+      pageUrl: [{ value: this.pageUrl, disabled: true }]
     });
   }
 
-  getRegionFromPoint(x, y, limitX, limitY) {
-    const x1 = x - (TAG_WIDTH / 2);
-    const y1 = y - (TAG_HEIGHT / 2);
-    const x2 = x + (TAG_WIDTH / 2);
-    const y2 = y + (TAG_HEIGHT / 2);
-    return {
-      minX: Math.max(0, x1),
-      minY: Math.max(0, y1),
-      maxX: Math.min(limitX, x2),
-      maxY: Math.min(limitY, y2)
-    };
-  }
-
-  get tagFormTags(): FormArray {
-    return this.tagForm.get('tags') as FormArray;
-  }
-
-  addTagZone(region) {
-    console.log(`Adding tag zone at (${region.minX},${region.minY})-(${region.maxX},${region.maxY})`);
-    this.tagFormTags.push(this.fb.group({ region, personName: ['', Validators.required ] }));
-  }
-
-  imageClicked(event: MouseEvent) {
-    const { offsetX: x, offsetY: y , target } = event;
-    this.addTagZone(this.getRegionFromPoint(x, y, target['clientWidth'], target['clientHeight']));
-  }
-
-  onCancel() {
-    window.close();
-  }
-
-  formatDataObject() {
-    const object = {
-      ...this.tagForm.getRawValue(),
-      user: this.userToken,
-      source: this.pageUrl,
-      image: this.imgUrl
-    };
-    console.log(object);
-    return object;
+  get formTags(): FormArray {
+    return this.form.get('tags') as FormArray;
   }
 
   onSubmit() {
-    const DTO = this.formatDataObject();
-    const headers = {
-      'Authorization': `Bearer ${this.userToken}`
-    };
-    this.isSending = true;
-    this.http.post(`${environment.api_base_path}/hello`, DTO, { headers }).pipe(
-      // Example delay for when testing local server
-      delay(2000)
-    ).subscribe(() => {
-      this.isSending = false;
-      this.isDone = true;
+    // console.log(this.form.getRawValue());
+    this.taggedSubmitted.emit({
+      ...this.form.getRawValue(),
+      width: this.imageWidth,
+      height: this.imageHeight
     });
   }
 
+  onImageLoad(event) {
+    this.imageX = (this.sourceImage.nativeElement as HTMLImageElement).x;
+    this.imageY = (this.sourceImage.nativeElement as HTMLImageElement).y;
+    this.imageWidth = (this.sourceImage.nativeElement as HTMLImageElement).clientWidth;
+    this.imageHeight = (this.sourceImage.nativeElement as HTMLImageElement).clientHeight;
+  }
+
+  onTagMouseDown(index: number) {
+    const move$ = fromEvent(document, 'mousemove');
+    const up$ = fromEvent(document, 'mouseup');
+    move$
+      .pipe(
+        filter((event: MouseEvent) => (event.target as HTMLDivElement).className.includes('tag-box')),
+        takeUntil(up$)
+      )
+      .subscribe((event: MouseEvent) => {
+        event.stopPropagation();
+        const { offsetX, offsetY, clientX, clientY, target } = event;
+        const x = (target as HTMLDivElement).offsetLeft + offsetX;
+        const y = (target as HTMLDivElement).offsetTop + offsetY;
+        const region = this.getRegionFromPoint(x, y);
+        this.formTags.at(index).get('region').setValue(region);
+      });
+  }
+
+  onImageClicked(event: MouseEvent) {
+    const { offsetX: x, offsetY: y , target } = event;
+    const region = this.getRegionFromPoint(x, y);
+    this.addTagZone(region);
+  }
+
+  addTagZone(region) {
+    this.formTags.push(this.fb.group({ region, name: ['', Validators.required] }));
+  }
+  getRegionFromPoint(x, y) {
+    const midX = limit(HALF_TAG_WIDTH, this.imageWidth - HALF_TAG_WIDTH, x);
+    const midY = limit(HALF_TAG_HEIGHT, this.imageHeight - HALF_TAG_HEIGHT, y);
+    const minX = midX - HALF_TAG_WIDTH;
+    const minY = midY - HALF_TAG_HEIGHT;
+    const maxX = midX + HALF_TAG_WIDTH;
+    const maxY = midY + HALF_TAG_HEIGHT;
+    return { minX, minY, maxX, maxY };
+  }
 }

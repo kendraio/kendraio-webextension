@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TaggerComponent } from './tagger/tagger.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TaggerHostComponent } from './tagger-host/tagger-host.component';
 
 @NgModule({
   imports: [
@@ -12,10 +13,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     RouterModule.forChild([
       {
         path: '',
-        component: TaggerComponent
+        component: TaggerHostComponent
       }
     ])
   ],
-  declarations: [TaggerComponent]
+  declarations: [TaggerComponent, TaggerHostComponent]
 })
 export class TaggerModule { }

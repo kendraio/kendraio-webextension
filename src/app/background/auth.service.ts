@@ -17,7 +17,7 @@ export class AuthService {
 
   async authenticate() {
     const { code_verifier, code_challenge } = await generateCodeChallengePair(32);
-    console.log({ code_verifier, code_challenge });
+    // console.log({ code_verifier, code_challenge });
     const options = {
       client_id,
       code_challenge,
@@ -31,7 +31,7 @@ export class AuthService {
       .map(key => `${key}=${encodeURIComponent(options[key])}`)
       .join('&');
     const url = `https://${domain}/authorize?${encodedOptions}`;
-    console.log({url});
+    // console.log({url});
 
     chrome.identity.launchWebAuthFlow({url, interactive: true}, (resultUrl) => {
       if (chrome.runtime.lastError) {
@@ -56,10 +56,10 @@ export class AuthService {
             }
           });
           const kendraioAuthParams = await result.json();
-          console.log('setting', kendraioAuthParams);
+          // console.log('setting', kendraioAuthParams);
           this.ext.set({ kendraioAuthParams }, () => console.log('Set auth params'));
         } catch (e) {
-          console.error(e);
+          // console.error(e);
         }
       })();
     });

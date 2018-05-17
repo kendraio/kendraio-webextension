@@ -15,7 +15,7 @@ export class BackgroundComponent implements OnInit {
 
   ngOnInit() {
     this.ext.setBackgroundListener(({ type }, sender, sendResponse) => {
-      console.log(`Run command ${type}`);
+      // console.log(`Run command ${type}`);
       switch (type) {
         case 'authenticate':
           this.authService.authenticate();
@@ -32,7 +32,7 @@ export class BackgroundComponent implements OnInit {
     this.ext.setMenuListener((info, tab) => {
       switch (info.menuItemId) {
         case "image-tagger":
-          console.log({ info, tab });
+          // console.log({ info, tab });
           this.taggerInfo = info;
           chrome.tabs.create({
             url: "/index.html#/tagger",

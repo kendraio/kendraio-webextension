@@ -1,10 +1,10 @@
 
 export async function generateCodeChallengePair(length) {
   const randomBytes = getRandomBytes(length);
-  console.log('random', randomBytes);
+  // console.log('random', randomBytes);
   const code_verifier = _arrayBufferToBase64(base64URLEncode(randomBytes));
   const code_challenge = _arrayBufferToBase64(base64URLEncode(await sha256(randomBytes)));
-  console.log({ code_verifier, code_challenge });
+  // console.log({ code_verifier, code_challenge });
   return { code_verifier, code_challenge };
 }
 
@@ -15,8 +15,8 @@ function getRandomBytes(length) {
 }
 
 function base64URLEncode(str) {
-  console.log(str);
-  console.log(str.toString('base64'));
+  // console.log(str);
+  // console.log(str.toString('base64'));
   return str.toString('base64')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')

@@ -3,6 +3,11 @@
   margin: 2em auto;
   width: 80%;
 }
+
+button {
+  margin-right: 1em;
+}
+
 .tag-container {
   position: relative;
 }
@@ -10,7 +15,11 @@
   position: absolute;
   border: 5px solid blue;
 }
-.tag-box > span {
-  font-weight: bold;
-  color: white;
+.tag-preview {
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+}
+.tag-fields-wrapper {
+  margin-bottom: 1em;
 }

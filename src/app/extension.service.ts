@@ -24,10 +24,12 @@ export class ExtensionService {
 
   getUserToken(callback) {
     this.get('kendraioAuthParams', item => {
+      // console.log({ item });
       if (item && item.kendraioAuthParams) {
         const auth = item.kendraioAuthParams;
+        // console.log({ auth });
         if (auth.id_token) {
-          callback(auth.id_token);
+          return callback(auth.id_token);
         }
       }
       callback(false);
@@ -53,7 +55,7 @@ export class ExtensionService {
       title: 'Tag Image (Kendraio)',
       contexts: ["image"]
     }, () => {
-      console.log('Added context menu item');
+      // console.log('Added context menu item');
     });
     chrome.contextMenus.onClicked.addListener(listener);
   }

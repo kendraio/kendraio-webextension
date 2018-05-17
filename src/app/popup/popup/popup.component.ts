@@ -14,7 +14,7 @@ export class PopupComponent implements OnInit {
   constructor(private ext: ExtensionService, private zone: NgZone) { }
 
   ngOnInit() {
-    console.log('init popup');
+    // console.log('init popup');
     this.ext.getUser((user: any)=> {
       if (user) {
         this.zone.run(() => {

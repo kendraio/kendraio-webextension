@@ -1,6 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ExtensionService } from '../../extension.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-options',
@@ -18,13 +19,13 @@ export class OptionsComponent implements OnInit {
     private ext: ExtensionService
   ) {
     this.optionsForm = this.fb.group({
-      backend: ['http://localhost:8080', Validators.required]
+      backend: [environment.api_base_path, Validators.required]
     })
   }
 
   ngOnInit() {
     this.ext.get({
-      kendraioOptions: { backend: 'http://localhost:8080' }
+      kendraioOptions: { backend: environment.api_base_path }
     }, (items) => {
       this.zone.run(() => {
         this.optionsForm.patchValue(items.kendraioOptions);
