@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --aot",
+    "build": "ng build --aot && cp src/manifest-dev.json dist/kendraio-app/manifest.json",
     "build:prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",

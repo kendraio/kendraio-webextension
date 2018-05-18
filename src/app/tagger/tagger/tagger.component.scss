@@ -19,6 +19,7 @@ button {
   width: 96px;
   height: 96px;
   overflow: hidden;
+  position: relative;
 }
 .tag-fields-wrapper {
   margin-bottom: 1em;
@@ -27,4 +28,7 @@ button {
 .tag-box > span {
   color: white;
   font-weight: bold;
+}
+.remove-tag-button {
+  position: absolute;
 }

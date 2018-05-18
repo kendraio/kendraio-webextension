@@ -35,7 +35,7 @@
           <div class="media">
             <div class="media-left">
               <div class="tag-preview">
-                <button class="delete is-large" aria-label="delete" (click)="removeTag(i)"></button>
+                <button class="delete is-large remove-tag-button" aria-label="delete" (click)="removeTag(i)"></button>
                 <img [attr.src]="imageUrl" draggable="false"
                      [style.margin-left.px]="-tag.get('region').value['minX']"
                      [style.margin-top.px]="-tag.get('region').value['minY']"
