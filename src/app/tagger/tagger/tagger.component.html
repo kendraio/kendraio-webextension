@@ -30,10 +30,13 @@
       <div formArrayName="tags">
         <div class="tag-fields-wrapper" *ngFor="let tag of formTags.controls; let i = index" [formGroupName]="i">
 
+
+
           <div class="media">
             <div class="media-left">
               <div class="tag-preview">
-                <img [attr.src]="imageUrl"
+                <button class="delete is-large" aria-label="delete" (click)="removeTag(i)"></button>
+                <img [attr.src]="imageUrl" draggable="false"
                      [style.margin-left.px]="-tag.get('region').value['minX']"
                      [style.margin-top.px]="-tag.get('region').value['minY']"
                      [style.max-width.px]="imageWidth"
@@ -42,17 +45,31 @@
               </div>
             </div>
             <div class="media-content">
-              <div class="field">
-                <label class="label">
-                  Tag {{ i + 1 }}
-                  <button class="delete" aria-label="delete" (click)="removeTag(i)"></button>
-                </label>
+
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Tag {{ i + 1 }}
+                  </a>
+                </p>
+                <p class="control is-expanded">
+                  <input class="input is-fullwidth" type="text" formControlName="name">
+                </p>
                 <div class="control">
-                  <input class="input" type="text" formControlName="name">
+                  <div class="select">
+                    <select formControlName="visibility">
+                      <option>Public</option>
+                      <option>Private</option>
+                      <option>Custom</option>
+                    </select>
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
+
+
 
         </div>
       </div>

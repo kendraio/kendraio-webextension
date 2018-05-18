@@ -85,7 +85,7 @@ export class TaggerComponent implements OnInit {
   }
 
   addTagZone(region) {
-    this.formTags.push(this.fb.group({ region, name: ['', Validators.required] }));
+    this.formTags.push(this.fb.group({ region, name: ['', Validators.required], visibility: ['Public'] }));
   }
   getRegionFromPoint(x, y) {
     const midX = limit(HALF_TAG_WIDTH, this.imageWidth - HALF_TAG_WIDTH, x);

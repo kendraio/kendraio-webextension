@@ -6,11 +6,11 @@
 
       <article class="message is-danger">
         <div class="message-header">
-          <p>No Auth</p>
+          <p>{{ errorTitle }}</p>
           <button class="delete" (click)="onCancel()" aria-label="delete"></button>
         </div>
         <div class="message-body">
-          Login via the toolbar to start tagging.
+          {{ errorMessage }}
         </div>
       </article>
 
