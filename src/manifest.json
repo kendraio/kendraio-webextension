@@ -1,6 +1,6 @@
 {
   "name": "Kendraio App",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "manifest_version": 2,
   "description": "Kendraio App as a WebExtension",
   "homepage_url": "https://kendra.io/",

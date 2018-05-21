@@ -17,10 +17,14 @@ export class PopupComponent implements OnInit {
     // console.log('init popup');
     this.ext.getUser((user: any)=> {
       if (user) {
-        this.zone.run(() => {
-          this.userName = user.nickname || 'Kendraio User';
-          this.isLoggedIn = true;
-        });
+        const { exp, nickname } = user;
+        // Check user token is not past expiry time
+        if ((exp * 1000) >= new Date().getTime()) {
+          this.zone.run(() => {
+            this.userName = nickname || 'Kendraio User';
+            this.isLoggedIn = true;
+          });
+        }
       }
     });
   }
