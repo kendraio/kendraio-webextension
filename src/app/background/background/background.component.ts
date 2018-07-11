@@ -30,12 +30,19 @@ export class BackgroundComponent implements OnInit {
       }
     });
     this.ext.setMenuListener((info, tab) => {
+      // console.log(window.getSelection());
+      // console.log({ info, tab });
       switch (info.menuItemId) {
         case "image-tagger":
-          // console.log({ info, tab });
           this.taggerInfo = info;
           chrome.tabs.create({
             url: "/index.html#/tagger",
+          });
+          break;
+        case "selection-tagger":
+          this.taggerInfo = info;
+          chrome.tabs.create({
+            url: "/index.html#selection",
           });
           break;
       }

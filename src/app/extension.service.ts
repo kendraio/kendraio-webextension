@@ -57,6 +57,13 @@ export class ExtensionService {
     }, () => {
       // console.log('Added context menu item');
     });
+    chrome.contextMenus.create({
+      id: "selection-tagger",
+      title: "Tag Selection (Kendraio)",
+      contexts: ["selection"]
+    }, () => {
+      console.log('Added selection context menu item');
+    });
     chrome.contextMenus.onClicked.addListener(listener);
   }
 

@@ -20,6 +20,10 @@ const ROUTES = [
     loadChildren: './tagger/tagger.module#TaggerModule'
   },
   {
+    path: 'selection',
+    loadChildren: './selection/selection.module#SelectionModule'
+  },
+  {
     path: 'options',
     loadChildren: './options/options.module#OptionsModule'
   }

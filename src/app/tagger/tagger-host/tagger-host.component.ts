@@ -1,6 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExtensionService } from '../../extension.service';
+import PouchDB from 'pouchdb';
+import { v4 as UUIDv4 } from 'uuid';
 
 @Component({
   selector: 'app-tagger-host',
@@ -55,39 +57,54 @@ export class TaggerHostComponent implements OnInit {
   }
 
   formatDataObject(payload) {
+    console.log({ payload });
     const dto = [];
+    const imageId = UUIDv4();
+
+    const contentUrl = payload.imgUrl; //.split(/[?#]/)[0];
+
+    const pxToPercent = (a, b) => (b !== 0) ? (a / b) : 0;
 
     dto.push({
-      "@context": "http://kendraio.org/schema-v1",
-      "@id": `IMAGE-1`,
-      "@type": "image",
-      "coordinateSystem": "CSS (as displayed)",
-      "url": payload.imgUrl,
-      "sourceUrl": payload.pageUrl,
-      "width": payload.width,
-      "height": payload.height
+      "@id": imageId,
+      "@type": "schema:ImageObject",
+      "schema:contentUrl": contentUrl,
+      "schema:name": new URL(payload.imgUrl).pathname.slice(1),
+      "schema:url": payload.pageUrl,
+      "schema:width": payload.width,
+      "schema:height": payload.height
     });
     payload.tags.forEach((tag, index) => {
+      const tagId = UUIDv4();
       dto.push({
-        "@context": "http://schema.org",
-        "@id": `PERSON-${index}`,
-        "@type": "Person",
-        "name": tag.name
+        "@id": tagId,
+        "@type": "schema:Person",
+        "schema:name": tag.name
       });
       dto.push({
-        "@context": "http://kendraio.org/schema-v1",
-        "@id": `TAG-${index}`,
-        "@type": "inclusion-relationship",
-        "timestamp": new Date().toISOString(),
-        "frame": { "@id": "IMAGE_NODE" },
-        "content": { "@id": `PERSON-${index}` },
-        "coordinateSystem": "CSS (as displayed)",
-        "visibility": tag.visibility,
-        "boundingBox": tag.region
+        "@id": UUIDv4(),
+        "@type": "kendra:InclusionRelationship",
+        "kendra:timestamp": new Date().toISOString(),
+        "kendra:source": { "@id": imageId },
+        "kendra:target": { "@id": tagId },
+        "kendra:visibility": tag.visibility,
+        "kendra:boundingBox": {
+          minX: pxToPercent(tag.region.minX, payload.width),
+          minY: pxToPercent(tag.region.minY, payload.height),
+          maxX: pxToPercent(tag.region.maxX, payload.width),
+          maxY: pxToPercent(tag.region.maxY, payload.height)
+        }
       });
     });
 
-    return dto;
+    return [{
+      "@context": {
+        "schema": "http://schema.org",
+        "kendra": "http://kendra.io/schema-v1",
+        "@vocab": "http://facta.kendra.io/vocab#"
+      },
+      "graph": dto
+    }];
   }
 
   onCancel() {
@@ -121,5 +138,16 @@ export class TaggerHostComponent implements OnInit {
           this.errorMessage = 'Login via the toolbar to start tagging.';
         }
       });
+
+    // TODO: add remote DB as a configuration option
+    // const remoteDb = 'http://localhost:5984/';
+    // const DB_NAME = 'db-test-03';
+    // const db = new PouchDB(`${remoteDb}${DB_NAME}`);
+    //
+    // Promise.all(DTO[0].graph.map(item => {
+    //   item['_id'] = item['@id'];
+    //   return db.put(item);
+    // })).then(console.log);
+
   }
 }
