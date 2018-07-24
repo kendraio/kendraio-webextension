@@ -66,7 +66,7 @@ export class TaggerHostComponent implements OnInit {
     const pxToPercent = (a, b) => (b !== 0) ? (a / b) : 0;
 
     dto.push({
-      "@id": imageId,
+      "@id": `kuid:${imageId}`,
       "@type": "schema:ImageObject",
       "schema:contentUrl": contentUrl,
       "schema:name": new URL(payload.imgUrl).pathname.slice(1),
@@ -77,16 +77,16 @@ export class TaggerHostComponent implements OnInit {
     payload.tags.forEach((tag, index) => {
       const tagId = UUIDv4();
       dto.push({
-        "@id": tagId,
+        "@id": `kuid:${tagId}`,
         "@type": "schema:Person",
         "schema:name": tag.name
       });
       dto.push({
-        "@id": UUIDv4(),
+        "@id": `kuid:${UUIDv4()}`,
         "@type": "kendra:InclusionRelationship",
         "kendra:timestamp": new Date().toISOString(),
-        "kendra:source": { "@id": imageId },
-        "kendra:target": { "@id": tagId },
+        "kendra:source": { "@id": `kuid:${imageId}` },
+        "kendra:target": { "@id": `kuid:${tagId}` },
         "kendra:visibility": tag.visibility,
         "kendra:boundingBox": {
           minX: pxToPercent(tag.region.minX, payload.width),
@@ -99,8 +99,9 @@ export class TaggerHostComponent implements OnInit {
 
     return [{
       "@context": {
-        "schema": "http://schema.org",
-        "kendra": "http://kendra.io/schema-v1",
+        "schema": "http://schema.org/",
+        "kendra": "http://kendra.io/types#",
+        "kuid": "http://kendra.io/uuid#",
         "@vocab": "http://facta.kendra.io/vocab#"
       },
       "graph": dto

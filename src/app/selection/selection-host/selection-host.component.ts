@@ -120,14 +120,17 @@ export class SelectionHostComponent implements OnInit {
 
     graph.push({
       "@type": "kendra:TextSelection",
-      "@id": textId,
+      "@id": `kuid:${textId}`,
+      "kendra:timestamp": new Date().toISOString(),
       "kendra:selectionText": selectionText,
-      "kendra:sourceUrl": sourceUrl
+      "kendra:sourceUrl": sourceUrl,
+      "kendra:citation": { "@id": `kuid:${citeId}` },
+      "kendra:visibility": citation.visibility,
     });
 
     graph.push({
       "@type": "schema:CreativeWork",
-      "@id": citeId,
+      "@id": `kuid:${citeId}`,
       "schema:name": citation.name,
       "schema:genre": citation.genre,
       "schema:description": citation.description,
@@ -138,19 +141,21 @@ export class SelectionHostComponent implements OnInit {
       "schema:isbn": citation.isbn
     });
 
-    graph.push({
-      "@type": "kendra:Citation",
-      "kendra:timestamp": new Date().toISOString(),
-      "kendra:source": { "@id": textId },
-      "kendra:target": { "@id": citeId },
-      "kendra:visibility": citation.visibility,
-    });
+    // TODO: does citation need this linking entity?
+    // graph.push({
+    //   "@type": "kendra:Citation",
+    //   "kendra:timestamp": new Date().toISOString(),
+    //   "kendra:source": { "@id": textId },
+    //   "kendra:target": { "@id": citeId },
+    //   "kendra:visibility": citation.visibility,
+    // });
 
     const DTO = [
       {
         "@context": {
-          "schema": "http://schema.org",
-          "kendra": "http://kendra.io/schema-v1",
+          "schema": "http://schema.org/",
+          "kendra": "http://kendra.io/types#",
+          "kuid": "http://kendra.io/uuid#",
           "@vocab": "http://facta.kendra.io/vocab#"
         },
         graph
